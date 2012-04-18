@@ -1,0 +1,6 @@
+Shoreditch SampleAI
+=====================
+
+This is a Simple AI which can be used as the base for an entry into the Shoreditch AI Competition.
+
+You should only _need_ to edit logic.py, though you are welcome to modify others (or write your own from scratch).
