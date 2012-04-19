@@ -1,6 +1,16 @@
 import json
 from httplib2 import Http
 
+GENERATORS = {
+	"lumber_mill": "lumber",
+	"ore_refinery": "ore",
+	"grain_field": "grain",
+	"sheep": "wool",
+	"building_yard": "brick"
+}
+
+RESOURCES = GENERATORS.values()
+
 GENERATOR_COST = {
 	"brick": 1,
 	"lumber": 1,
@@ -27,7 +37,7 @@ class Game(object):
 		self.improved_generators = player['improved_generators']
 		self.roads = player['roads']
 
-	def request(self, resource, body=None, method='POST'):
+	def request(self, resource, body=None, method='POST', allow_error = False):
 		http = Http()
 
 		if not body:
@@ -38,17 +48,23 @@ class Game(object):
 
 		response, data = http.request("%s/%s" % (self.game['endpoint'], resource), method=method, body=body, headers={"Content-type": "application/json"})
 
-		if response.status != 200:
+		if not allow_error and response.status != 200:
 			print "Error ", data
 			return False
 
-		data = json.loads(data)
-		if 'player' in data:
-			player = data['player']
-			self.resources = player['resources']
-			self.generators = player['generators']
-			self.improved_generators = player['improved_generators']
-			del data['player']
+		try:
+			data = json.loads(data)
+			if 'player' in data:
+				player = data['player']
+				self.resources = player['resources']
+				self.generators = player['generators']
+				self.improved_generators = player['improved_generators']
+				del data['player']
+		except ValueError:
+			pass
+
+		if allow_error:
+			return status, data
 		return data
 
 	def can_purchase_road(self):
@@ -70,7 +86,8 @@ class Game(object):
 		return True
 
 	def purchase_generator(self):
-		data = self.request('purchase_road')
+		data = self.request('purchase_generator')
+		return data['generator_type']
 
 	def can_upgrade_generator(self):
 		if sum(self.improved_generators.values()) > 4:
@@ -95,6 +112,12 @@ class Game(object):
 			return False
 
 		data = self.request('upgrade_generator', {"generator_type": generator_type})
+
+	def trade(self, offering, requesting):
+		response, data = self.request('trade', {'offering': offering, 'requesting': requesting}, allow_error=True)
+		if response.status == 200:
+			return True
+		return False
 
 	def end_turn(self):
 		self.request('end_turn')

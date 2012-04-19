@@ -48,6 +48,18 @@ def start_turn(db, game):
 	thread.start_new_thread(run_turn, ())
 	return {"status": "success"}
 
+@post('/game/:session_id/trade')
+@use_db
+@use_game
+def incoming_trade(db, game):
+	if not 'offering' in request.json:
+		abort(400, 'Must offer something')
+	if not 'requesting' in request.json:
+		abort(400, 'Must request something')
+	if not logic.incoming_trade(db, game, request.json['offering'], request.json['requesting']):
+		abort(500, "No deal")
+	return {"status": "success"}
+
 @delete('/game/:session_id')
 @use_db
 @use_game
