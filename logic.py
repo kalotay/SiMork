@@ -1,13 +1,13 @@
 ###########
 ### AI Controller with HTTP abstracted away
+###
+### Space is a dict which will be persisted across calls
+###
 ###########
 
-from baselogic import BaseLogic
+def start_game(game, space):
+	pass
 
-class Logic(BaseLogic):
-	def start_game():
-		pass
-	
-	def start_turn(self):
-		# For now just end turn immediately
-		self.end_turn()
+def start_turn(game, space):
+	# For now just end turn immediately
+	game.end_turn()
