@@ -39,10 +39,10 @@ def start_turn(db, game):
 			offer = {}
 
 			for resource in RESOURCES:
-				if resource in requirements and requirements['resource'] > game.resources[resource]:
-					request[resource] = requirements['resource'] - game.resources[resource]
+				if resource in requirements and requirements[resource] > game.resources[resource]:
+					request[resource] = requirements[resource] - game.resources[resource]
 				else:
-					to_offer = game.resources[resource] - requirements.get('resource', 0)
+					to_offer = game.resources[resource] - requirements.get(resource, 0)
 					if to_offer > 0:
 						offer[resource] = to_offer
 
@@ -52,15 +52,15 @@ def start_turn(db, game):
 			# Can build generators - try to trade for them
 			if trade_for(GENERATOR_COST):
 				taking_turn = True
-		elif sum(game.improved_generators.values()) < 4:
+		if sum(game.improved_generators.values()) < 4:
 			# Can improve one of our existing ones
 			if trade_for(GENERATOR_IMPROVEMENT_COST):
 				taking_turn = True
-		else:
-			# Let's just build a road
-			if trade_for(ROAD_COST):
-				taking_turn = True
-	
+		
+		# Let's just build a road
+		if trade_for(ROAD_COST):
+			taking_turn = True
+
 	game.end_turn()
 
 def end_game(db, game, error=None):

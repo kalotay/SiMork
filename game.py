@@ -64,7 +64,7 @@ class Game(object):
 			pass
 
 		if allow_error:
-			return status, data
+			return response, data
 		return data
 
 	def can_purchase_road(self):
