@@ -13,8 +13,20 @@ def start_game(db, game):
 	print "Starting a game"
 
 def start_turn(db, game):
-	# For now just end turn immediately
 	print "Taking my turn"
+	
+	# while game.can_purchase_generator():
+	# 	generator_type = game.purchase_generator()
+	# 	print "Purchased %s" % generator_type
+
+	# while game.can_upgrade_generator():
+	# 	generator_type = game.upgrade_generator()
+	# 	print "Upgraded %s" % generator_type
+
+	while game.can_purchase_road():
+		game.purchase_road()
+		print "Purchased road"
+
 	game.end_turn()
 
 def end_game(db, game, error=None):

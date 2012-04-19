@@ -16,7 +16,19 @@ def use_game(f):
 		g = db.get(session_id)
 		if not g or not g.get('type') == 'game':
 			abort(400, 'Not a valid game')
-		game = Game(g)
+
+		if not 'json' in kwargs:
+			if not request.json:
+				abort(400, 'Must use Content-type of application/json')
+			kwargs['json'] = request.json
+
+		if not 'player' in kwargs['json']:
+			abort(400, 'Must pass "player"')
+		
+		player = kwargs['json']['player']
+		del kwargs['json']
+
+		game = Game(g, player)
 		return f(db, game, *args, **kwargs)
 	return inner_func
 
