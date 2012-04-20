@@ -70,7 +70,9 @@ def end_game(db, game, error=None):
 		print "Game over"
 
 def incoming_trade(db, game, offering, requesting):
+	print "INCOMING TRADE"
 	# As long as I'm gaining at least one resource more than I'm giving away, I'll accept
 	if sum(offering.values()) > sum(requesting.values()):
+		print "ACCEPTED"
 		return True
 	return False
