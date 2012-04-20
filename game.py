@@ -111,7 +111,11 @@ class Game(object):
 		if not generator_type:
 			return False
 
-		data = self.request('upgrade_generator', {"generator_type": generator_type})
+		response, data = self.request('upgrade_generator', {"generator_type": generator_type}, allow_error=True)
+
+		if response.status == 200:
+			return data['generator_type']
+		return False
 
 	def trade(self, offering, requesting):
 		response, data = self.request('trade', {'offering': offering, 'requesting': requesting}, allow_error=True)

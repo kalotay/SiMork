@@ -22,9 +22,9 @@ def start_turn(db, game):
 			generator_type = game.purchase_generator()
 			print "Purchased %s" % generator_type
 
-		# while game.can_upgrade_generator():
-		# 	generator_type = game.upgrade_generator()
-		# 	print "Upgraded %s" % generator_type
+		while game.can_upgrade_generator():
+			generator_type = game.upgrade_generator()
+			print "Upgraded %s" % generator_type
 
 		while game.can_purchase_road():
 			game.purchase_road()
