@@ -31,6 +31,7 @@ ROAD_COST = {
 class Game(object):
 	def __init__(self, game, player):
 		self.game = game
+		self.secret = player['secret']
 		self.storage = game['storage']
 		self.resources = player['resources']
 		self.generators = player['generators']
@@ -44,6 +45,7 @@ class Game(object):
 			body = {}
 
 		body['player_id'] = self.game['id']
+		body['secret'] = self.secret
 		body = json.dumps(body)
 
 		response, data = http.request("%s/%s" % (self.game['endpoint'], resource), method=method, body=body, headers={"Content-type": "application/json"})
