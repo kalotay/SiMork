@@ -9,58 +9,66 @@
 ###
 ###########
 
-from game import RESOURCES, GENERATOR_COST, GENERATOR_IMPROVEMENT_COST, PR_COST
+from game import RESOURCES, GENERATOR_COST, GENERATOR_IMPROVEMENT_COST, PR_COST, MAX_RESOURCE_GENERATORS, MAX_IMPROVED_RESOURCE_GENERATORS
 
 def start_game(db, game):
+	# A new game is starting
 	print "Starting a game"
 
 def start_turn(db, game, actions):
-	print "Taking my turn"
-	print actions
-	taking_turn = True
-	while taking_turn:
-		while game.can_purchase_generator():
-			generator_type = game.purchase_generator()
-			print "Purchased %s" % generator_type
+	# Start of a turn
+	# We have to end the turn with game.end_turn() when we're done
+	# alhough we only get 15 seconds to act before our turn is ended by force
+	
+	# actions is a dict of things which have happened since my last turn,
+	# where the keys are player ids, and the values are lists of actions taken,
+	# each action is a dict which has an 'action' key (which can be 'purchase-pr', 'trade', etc.)
 
-		while game.can_upgrade_generator():
-			generator_type = game.upgrade_generator()
-			print "Upgraded %s" % generator_type
+	def trade_for(requirements):
+		# This just figures out how much I can give away without harming the minimum requirements
+		# then offers everything extra I have for everything I need.
+		# It's very dumb, you should replace it
+		request = {}
+		offer = {}
 
-		while game.can_purchase_pr():
-			game.purchase_pr()
-			print "Purchased PR"
+		for resource in RESOURCES:
+			if resource in requirements and requirements[resource] > game.resources[resource]:
+				request[resource] = requirements[resource] - game.resources[resource]
+			else:
+				to_offer = game.resources[resource] - requirements.get(resource, 0)
+				if to_offer > 0:
+					offer[resource] = to_offer
 
-		# Can't do anything? maybe trade for it
-		taking_turn = False
+		return game.trade(offer, request)
 
+	### First try to trade for resources I need
 
-		def trade_for(requirements):
-			request = {}
-			offer = {}
-
-			for resource in RESOURCES:
-				if resource in requirements and requirements[resource] > game.resources[resource]:
-					request[resource] = requirements[resource] - game.resources[resource]
-				else:
-					to_offer = game.resources[resource] - requirements.get(resource, 0)
-					if to_offer > 0:
-						offer[resource] = to_offer
-
-			return game.trade(offer, request)
-
-		if sum(game.generators.values()) < 5:
-			# Can build generators - try to trade for them
-			if trade_for(GENERATOR_COST):
-				taking_turn = True
-		if sum(game.improved_generators.values()) < 4:
-			# Can improve one of our existing ones
-			if trade_for(GENERATOR_IMPROVEMENT_COST):
-				taking_turn = True
-		
-		# Let's just build some PR
-		if trade_for(PR_COST):
+	if sum(game.generators.values()) < MAX_RESOURCE_GENERATORS:
+		# Can build generators - try to trade for them
+		if trade_for(GENERATOR_COST):
 			taking_turn = True
+
+	if sum(game.improved_generators.values()) < MAX_IMPROVED_RESOURCE_GENERATORS:
+		# Can improve one of our existing ones
+		if trade_for(GENERATOR_IMPROVEMENT_COST):
+			taking_turn = True
+
+	trade_for(PR_COST)
+
+	# Then spend the resources
+
+	while game.can_purchase_generator():
+		generator_type = game.purchase_generator()
+		print "Purchased %s" % generator_type
+
+	while game.can_upgrade_generator():
+		generator_type = game.upgrade_generator()
+		print "Upgraded %s" % generator_type
+
+	while game.can_purchase_pr():
+		game.purchase_pr()
+		print "Purchased PR"
+
 	game.end_turn()
 
 def time_up(db, game):
@@ -74,9 +82,7 @@ def end_game(db, game, error=None):
 		print "Game over"
 
 def incoming_trade(db, game, offering, requesting):
-	print "INCOMING TRADE"
 	# As long as I'm gaining at least one resource more than I'm giving away, I'll accept
 	if sum(offering.values()) > sum(requesting.values()):
-		print "ACCEPTED"
 		return True
 	return False
