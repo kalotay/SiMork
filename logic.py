@@ -9,7 +9,7 @@
 ###
 ###########
 
-from game import RESOURCES, GENERATOR_COST, GENERATOR_IMPROVEMENT_COST, ROAD_COST
+from game import RESOURCES, GENERATOR_COST, GENERATOR_IMPROVEMENT_COST, PR_COST
 
 def start_game(db, game):
 	print "Starting a game"
@@ -26,9 +26,9 @@ def start_turn(db, game):
 			generator_type = game.upgrade_generator()
 			print "Upgraded %s" % generator_type
 
-		while game.can_purchase_road():
-			game.purchase_road()
-			print "Purchased road"
+		while game.can_purchase_pr():
+			game.purchase_pr()
+			print "Purchased PR"
 
 		# Can't do anything? maybe trade for it
 		taking_turn = False
@@ -57,8 +57,8 @@ def start_turn(db, game):
 			if trade_for(GENERATOR_IMPROVEMENT_COST):
 				taking_turn = True
 		
-		# Let's just build a road
-		if trade_for(ROAD_COST):
+		# Let's just build some PR
+		if trade_for(PR_COST):
 			taking_turn = True
 
 	game.end_turn()

@@ -2,31 +2,32 @@ import json
 from httplib2 import Http
 
 GENERATORS = {
-	"lumber_mill": "lumber",
-	"ore_refinery": "ore",
-	"grain_field": "grain",
-	"sheep": "wool",
-	"building_yard": "brick"
+	"suggestion_box": "idea",
+	"coder": "feature",
+	"kettle": "coffee",
+	"designer": "website",
+	"investor": "cash"
 }
 
-RESOURCES = GENERATORS.values()
-
+# RULE SETTINGS
 GENERATOR_COST = {
-	"brick": 1,
-	"lumber": 1,
-	"wool": 1,
-	"grain": 1
+	"cash": 1,
+	"idea": 1,
+	"website": 1,
+	"coffee": 1
 }
 
 GENERATOR_IMPROVEMENT_COST = {
-	"ore": 3,
-	"grain": 2
+	"feature": 3,
+	"coffee": 2
 }
 
-ROAD_COST = {
-	"brick": 1,
-	"lumber": 1
+PR_COST = {
+	"cash": 1,
+	"idea": 1
 }
+
+RESOURCES = GENERATORS.values()
 
 class Game(object):
 	def __init__(self, game, player):
@@ -36,7 +37,8 @@ class Game(object):
 		self.resources = player['resources']
 		self.generators = player['generators']
 		self.improved_generators = player['improved_generators']
-		self.roads = player['roads']
+		self.pr = player['pr']
+		self.customers = player['customers']
 
 	def request(self, resource, body=None, method='POST', allow_error = False):
 		http = Http()
@@ -69,14 +71,14 @@ class Game(object):
 			return response, data
 		return data
 
-	def can_purchase_road(self):
-		for resource in ROAD_COST:
-			if self.resources[resource] < ROAD_COST[resource]:
+	def can_purchase_pr(self):
+		for resource in PR_COST:
+			if self.resources[resource] < PR_COST[resource]:
 				return False
 		return True
 
-	def purchase_road(self):
-		self.request('purchase_road')
+	def purchase_pr(self):
+		self.request('purchase_pr')
 
 	def can_purchase_generator(self):
 		if sum(self.generators.values()) > 5:
