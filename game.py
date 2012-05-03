@@ -29,6 +29,9 @@ PR_COST = {
 
 RESOURCES = GENERATORS.values()
 
+MAX_RESOURCE_GENERATORS = 5
+MAX_IMPROVED_RESOURCE_GENERATORS = 4
+
 class Game(object):
 	def __init__(self, game, player):
 		self.game = game
@@ -81,7 +84,7 @@ class Game(object):
 		self.request('purchase_pr')
 
 	def can_purchase_generator(self):
-		if sum(self.generators.values()) > 5:
+		if sum(self.generators.values()) >= MAX_RESOURCE_GENERATORS:
 			return False # Can't have more than 5 generators
 
 		for resource in GENERATOR_COST:
@@ -94,7 +97,7 @@ class Game(object):
 		return data['generator_type']
 
 	def can_upgrade_generator(self):
-		if sum(self.improved_generators.values()) > 4:
+		if sum(self.improved_generators.values()) >= MAX_IMPROVED_RESOURCE_GENERATORS:
 			return False # Can't have more than 5 generators
 
 		if sum(self.generators.values()) < 1:
