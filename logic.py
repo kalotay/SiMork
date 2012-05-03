@@ -60,8 +60,11 @@ def start_turn(db, game):
 		# Let's just build some PR
 		if trade_for(PR_COST):
 			taking_turn = True
-
 	game.end_turn()
+
+def time_up(db, game):
+	# We have ran out of time for this turn, it has been forced to end
+	pass
 
 def end_game(db, game, error=None):
 	if error:

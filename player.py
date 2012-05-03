@@ -70,6 +70,16 @@ def end_game(db, game):
 	else:
 		def run_end():
 			logic.end_game(db,game)
+	thread.start_new_thread(run_end, ())
+	return {"status": "success"}
+
+@post('/game/:session_id/end_turn')
+@use_db
+@use_game
+def end_turn(db, game):
+	def run_end_turn():
+		logic.time_up(db,game)
+	thread.start_new_thread(run_end_turn, ())
 	return {"status": "success"}
 
 run(host='localhost', port=8099, reloader=True)
