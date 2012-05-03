@@ -14,8 +14,9 @@ from game import RESOURCES, GENERATOR_COST, GENERATOR_IMPROVEMENT_COST, PR_COST
 def start_game(db, game):
 	print "Starting a game"
 
-def start_turn(db, game):
+def start_turn(db, game, actions):
 	print "Taking my turn"
+	print actions
 	taking_turn = True
 	while taking_turn:
 		while game.can_purchase_generator():

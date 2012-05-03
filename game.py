@@ -42,6 +42,7 @@ class Game(object):
 		self.improved_generators = player['improved_generators']
 		self.pr = player['pr']
 		self.customers = player['customers']
+		self.actions = player['actions']
 
 	def request(self, resource, body=None, method='POST', allow_error = False):
 		http = Http()

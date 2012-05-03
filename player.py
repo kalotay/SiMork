@@ -44,7 +44,7 @@ def start_game(db, session_id):
 @use_game
 def start_turn(db, game):
 	def run_turn():
-		logic.start_turn(db, game)
+		logic.start_turn(db, game, game.actions)
 	thread.start_new_thread(run_turn, ())
 	return {"status": "success"}
 
