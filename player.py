@@ -7,6 +7,7 @@ from bottle import request, abort, run
 
 from storage import use_db
 import logic
+import config
 
 import thread
 from game import Game
@@ -82,4 +83,4 @@ def end_turn(db, game):
 	thread.start_new_thread(run_end_turn, ())
 	return {"status": "success"}
 
-run(host='localhost', port=8099, reloader=True)
+run(host='localhost', port=config.PORT, reloader=True)
