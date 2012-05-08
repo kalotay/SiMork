@@ -6,7 +6,7 @@ GENERATORS = {
 	"coder": "feature",
 	"kettle": "coffee",
 	"designer": "website",
-	"investor": "cash"
+	"angel_investor": "cash"
 }
 
 # RULE SETTINGS
