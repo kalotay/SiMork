@@ -83,8 +83,9 @@ class Game(object):
 		return True
 
 	def purchase_pr(self):
-		self.request('purchase_pr')
-		return False
+		data = self.request('purchase_pr')
+		if data:
+			return data['highest_pr']
 
 	def can_purchase_generator(self):
 		if sum(self.generators.values()) >= MAX_RESOURCE_GENERATORS:
