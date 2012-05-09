@@ -57,19 +57,20 @@ def start_turn(db, game, actions):
 
 	# Then spend the resources
 
-	while game.can_purchase_generator():
+	while game.can_purchase_generator() and game.turn:
 		generator_type = game.purchase_generator()
 		print "Purchased %s" % generator_type
 
-	while game.can_upgrade_generator():
+	while game.can_upgrade_generator() and game.turn:
 		generator_type = game.upgrade_generator()
 		print "Upgraded %s" % generator_type
 
-	while game.can_purchase_pr():
+	while game.can_purchase_pr() and game.turn:
 		game.purchase_pr()
 		print "Purchased PR"
 
-	game.end_turn()
+	if game.turn:
+		game.end_turn()
 
 def time_up(db, game):
 	# We have ran out of time for this turn, it has been forced to end
@@ -81,7 +82,7 @@ def end_game(db, game, error=None):
 	else:
 		print "Game over"
 
-def incoming_trade(db, game, offering, requesting):
+def incoming_trade(db, game, player, offering, requesting):
 	# As long as I'm gaining at least one resource more than I'm giving away, I'll accept
 	if sum(offering.values()) > sum(requesting.values()):
 		return True

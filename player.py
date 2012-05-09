@@ -45,6 +45,7 @@ def start_game(db, session_id):
 @use_game
 def start_turn(db, game):
 	def run_turn():
+		game.turn = True
 		logic.start_turn(db, game, game.actions)
 	thread.start_new_thread(run_turn, ())
 	return {"status": "success"}
@@ -57,7 +58,7 @@ def incoming_trade(db, game):
 		abort(400, 'Must offer something')
 	if not 'requesting' in request.json:
 		abort(400, 'Must request something')
-	if not logic.incoming_trade(db, game, request.json['offering'], request.json['requesting']):
+	if not logic.incoming_trade(db, game, request.json['player'], request.json['offering'], request.json['requesting']):
 		abort(500, "No deal")
 	return {"status": "success"}
 
@@ -79,6 +80,7 @@ def end_game(db, game):
 @use_game
 def end_turn(db, game):
 	def run_end_turn():
+		game.turn = False
 		logic.time_up(db,game)
 	thread.start_new_thread(run_end_turn, ())
 	return {"status": "success"}

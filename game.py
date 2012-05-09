@@ -36,13 +36,14 @@ class Game(object):
 	def __init__(self, game, player):
 		self.game = game
 		self.secret = player['secret']
-		self.storage = game['storage']
 		self.resources = player['resources']
 		self.generators = player['generators']
 		self.improved_generators = player['improved_generators']
 		self.pr = player['pr']
 		self.customers = player['customers']
 		self.actions = player['actions']
+		self.turn = False
+
 
 	def request(self, resource, body=None, method='POST', allow_error = False):
 		http = Http()
@@ -83,6 +84,7 @@ class Game(object):
 
 	def purchase_pr(self):
 		self.request('purchase_pr')
+		return False
 
 	def can_purchase_generator(self):
 		if sum(self.generators.values()) >= MAX_RESOURCE_GENERATORS:
@@ -95,7 +97,9 @@ class Game(object):
 
 	def purchase_generator(self):
 		data = self.request('purchase_generator')
-		return data['generator_type']
+		if data:
+			return data['generator_type']
+		return False
 
 	def can_upgrade_generator(self):
 		if sum(self.improved_generators.values()) >= MAX_IMPROVED_RESOURCE_GENERATORS:
@@ -128,8 +132,9 @@ class Game(object):
 	def trade(self, offering, requesting):
 		response, data = self.request('trade', {'offering': offering, 'requesting': requesting}, allow_error=True)
 		if response.status == 200:
-			return True
+			return data['accepted_by']
 		return False
 
 	def end_turn(self):
 		self.request('end_turn')
+		self.turn = False
